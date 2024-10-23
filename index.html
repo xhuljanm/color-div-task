@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Div</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="title">
+        <h1>Color Div - Task</h1>
+        <p>Task-u i pare javor</p>
+    </div>
+    <div class="container">
+        <div class="buttons">
+            <button id="colorButton" onclick="ColorContainerClient.applyNewColor()">Generate Color</button>
+            <button id="undoButton" onclick="ColorContainerClient.undo()">Undo</button>
+            <button id="redoButton" onclick="ColorContainerClient.redo()">Redo</button>
+            <button id="reset" onclick="ColorContainerClient.reset()">Reset</button>
+            <div class="toggleButtons">
+				<button id="toggleUndo">Toggle Undo List</button>
+            	<button id="toggleRedo">Toggle Redo List</button>
+			</div>
+        </div>
+        <div id="colorSquare">0</div>
+        <div id="overlay" class="overlay">
+            <div id="undoList" class="list">UndoList</div>
+            <div id="redoList" class="list">RedoList</div>
+        </div>
+    </div>
+    <script src="./script.js"></script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font-family: Impact, Haettenschweiler, sans-serif;
+}
+
+button {
+    margin: 10px;
+}
+
+.title {
+	text-align: center;
+}
+
+.container {
+	text-align: center;
+	padding: 20px;
+	display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#colorSquare {
+	width: 200px;
+    height: 200px;
+    border: 1px solid #000;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: #000;
+}
+
+#id {
+	width: 200px;
+    height: 200px;
+    border: 1px solid #000;
+}
+
+.lists {
+	padding: 10px;
+	display: flex;
+    justify-content: center;
+	flex-wrap: wrap;
+	margin: 5px;
+}
+
+#undoList, #redoList {
+    width: 500px;
+    min-height: 50px;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-left: 20px;
+}
+
+#undoList div, #redoList div {
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+}
+
+.toggleButtons {
+	display: none;
+}
+
+.list {
+    width: 300px;
+    min-height: 100px;
+	padding: 10px;
+	display: flex;
+	flex-direction: row;
+    justify-content: center;
+	flex-wrap: nowrap;
+	margin: 5px;
+}
+
+.overlay {
+	display: flex;
+	flex-direction: row;
+}
+
+@media (max-width: 600px) {
+    #colorSquare {
+        width: 150px;
+        height: 150px;
+        font-size: 20px;
+    }
+
+    #undoList, #redoList {
+        width: 90%;
+        min-height: 50px;
+        padding: 10px;
+        border: 1px solid #000;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        margin: 5px;
+    }
+
+    #undoList div, #redoList div {
+        width: 20px;
+        height: 20px;
+        margin: 2px;
+    }
+
+    .toggleButtons {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+}
