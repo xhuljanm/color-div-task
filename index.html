@@ -13,13 +13,13 @@
     </div>
     <div class="container">
         <div class="buttons">
-            <button id="colorButton" onclick="ColorContainerClient.applyNewColor()">Generate Color</button>
-            <button id="undoButton" onclick="ColorContainerClient.undo()">Undo</button>
-            <button id="redoButton" onclick="ColorContainerClient.redo()">Redo</button>
-            <button id="reset" onclick="ColorContainerClient.reset()">Reset</button>
+            <button id="colorButton" class="button green" onclick="ColorContainerClient.applyNewColor()">Generate Color</button>
+            <button id="undoButton" class="button red" onclick="ColorContainerClient.undo()">Undo</button>
+            <button id="redoButton" class="button blue" onclick="ColorContainerClient.redo()">Redo</button>
+            <button id="reset" class="button gray" onclick="ColorContainerClient.reset()">Reset</button>
             <div class="toggleButtons">
-				<button id="toggleUndo">Toggle Undo List</button>
-            	<button id="toggleRedo">Toggle Redo List</button>
+				<button id="toggleUndo" class="button gray">Toggle Undo List</button>
+            	<button id="toggleRedo" class="button gray">Toggle Redo List</button>
 			</div>
         </div>
         <div id="colorSquare">0</div>

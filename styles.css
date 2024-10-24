@@ -23,23 +23,6 @@ button {
     align-items: center;
 }
 
-#colorSquare {
-	width: 200px;
-    height: 200px;
-    border: 1px solid #000;
-	display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    color: #000;
-}
-
-#id {
-	width: 200px;
-    height: 200px;
-    border: 1px solid #000;
-}
-
 .lists {
 	padding: 10px;
 	display: flex;
@@ -48,24 +31,50 @@ button {
 	margin: 5px;
 }
 
-#undoList, #redoList {
-    width: 500px;
-    min-height: 50px;
-    padding: 20px;
-    border: 1px solid #000;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-left: 20px;
+.button {
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s;
 }
 
-#undoList div, #redoList div {
-    width: 20px;
-    height: 20px;
-    margin: 2px;
+.green {
+    background-color: #4CAF50;
+}
+
+.green:hover {
+    background-color: #45a049;
+}
+
+.red {
+    background-color: #f44336;
+}
+
+.red:hover {
+    background-color: #d32f2f;
+}
+
+.blue {
+    background-color: #2196F3;
+}
+
+.blue:hover {
+    background-color: #1976D2;
+}
+
+.gray {
+    background-color: #9E9E9E;
+}
+
+.gray:hover {
+    background-color: #757575;
 }
 
 .toggleButtons {
@@ -86,6 +95,60 @@ button {
 .overlay {
 	display: flex;
 	flex-direction: row;
+	padding: 15px;
+	border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+	margin-top: 10px;
+}
+
+#id {
+	width: 200px;
+    height: 200px;
+    border: 1px solid #000;
+}
+
+#colorSquare {
+	width: 200px;
+    height: 200px;
+    border: 1px solid #000;
+	border-radius: 10%;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: #000;
+	transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+#colorSquare:hover {
+	box-shadow: 0 4px 15px black;
+}
+
+#undoList, #redoList {
+    width: 500px;
+    min-height: 50px;
+    max-height: 200px;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-left: 20px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    overflow-y: auto;
+}
+
+#undoList div, #redoList div {
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+}
+
+#undoList:hover, #redoList:hover {
+	box-shadow: 0 4px 15px black;
 }
 
 @media (max-width: 600px) {
@@ -97,7 +160,8 @@ button {
 
     #undoList, #redoList {
         width: 90%;
-        min-height: 50px;
+        min-width: 150px;
+        max-height: 150px;
         padding: 10px;
         border: 1px solid #000;
         border-radius: 5px;
@@ -106,6 +170,7 @@ button {
         flex-direction: row;
         flex-wrap: wrap;
         margin: 5px;
+        overflow-y: auto;
     }
 
     #undoList div, #redoList div {
