@@ -164,23 +164,33 @@ class ColorContainer {
 	}
 
     generateNewColor() {
-        let r, g, b, clickCountR, clickCountG, clickCountB;
+        let r, g, b;
 
         while (true) { // Generate random RGB values
             r = Math.floor(Math.random() * 256);
             g = Math.floor(Math.random() * 256);
             b = Math.floor(Math.random() * 256);
 
-            clickCountR = (255 - r).toString(16).padStart(2, '0');
-            clickCountG = (255 - g).toString(16).padStart(2, '0');
-            clickCountB = (255 - b).toString(16).padStart(2, '0');
-
             if (!this.isGray(r, g, b) && !this.isTooBright(r, g, b) && !this.isTooDark(r, g, b)) break; // Exit loop if valid color
         }
 
         this.color = this.rgbToHex(r, g, b); // Convert RGB to Hex
-        this.clickCount.hex = this.rgbToHex(clickCountR, clickCountG, clickCountB);
     }
+
+	updateClickCountColor() {
+		const hexColor = this.currentColor.replace('#', ''); // Remove the '#' from hex
+		const r = parseInt(hexColor.substring(0, 2), 16);
+		const g = parseInt(hexColor.substring(2, 4), 16);
+		const b = parseInt(hexColor.substring(4, 6), 16);
+
+		// Invert the color
+		this.clickCount.color.r = 255 - r;
+		this.clickCount.color.g = 255 - g;
+		this.clickCount.color.b = 255 - b;
+
+		// Update hex representation
+		this.clickCount.hex = this.rgbToHex(this.clickCount.color.r, this.clickCount.color.g, this.clickCount.color.b);
+	}
 
     rgbToHex(r, g, b) {
         const hexR = r.toString(16).padStart(2, '0');
@@ -195,6 +205,7 @@ class ColorContainer {
             this.currentColor = this.color;
             this.undoStack.push(this.currentColor);
             this.clickCount.value++;
+			this.updateClickCountColor();
             this.updateSquare();
             this.updateLists();
         }
@@ -204,6 +215,7 @@ class ColorContainer {
         if (this.undoStack.length > 0) {
             this.redoStack.push(this.currentColor);
             this.currentColor = this.undoStack.pop();
+			this.updateClickCountColor();
             this.updateSquare();
             this.updateLists();
         }
@@ -213,6 +225,7 @@ class ColorContainer {
         if (this.redoStack.length > 0) {
             this.undoStack.push(this.currentColor);
             this.currentColor = this.redoStack.pop();
+			this.updateClickCountColor();
             this.updateSquare();
             this.updateLists();
         }
