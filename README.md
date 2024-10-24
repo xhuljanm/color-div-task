@@ -27,23 +27,23 @@
 - Nese vlera e type eshte `undo`, kontrollon nese `undoListDiv` eshte e dukshme me `display: flex;`. Nese po, e fsheh, nese jo e ben te dukshme `flex`.
 - Nse njerat nga vlera eshte e dukshme, overlay behet i dukshem (`display: flex;`) nese jo fshihet (`none`). (Mobile responsive)
 
-### `initDragAndDrop`:
-- Krijohet nje "loop" per te vendosur `ondragover` dhe `ondrop` cdo div ne `undoListDiv`.
-- `event.preventDefault()` lejohet hedhja e elementeve.
-- Per `redoListDiv` aplikohet e njejta gje.
-- Therritet funksioni `handleDrop`.
+### `setupDragAndDrop`:
+- Ben secilin element brenda div-it draggable.
+- Percakton event-et per terheqje dhe leshim:
+	- `ondragstart`: Ruajm te dhenat e terheqjes
+	- Event per prekjen per paisjen mobile (`touchstart`, `touchmove`, `touchend`).
+- Menaxhon leshimin duke perdorur `ondragover` dhe `ondrop`.
 
 ### `handleDrop`:
-- Mundeson hedhjen e ngjyrave ne listen `undo`.
-- `event.dataTransfer.getData` merr indeksin dhe llojin e listes nga hedhja.
+- Mundeson hedhjen e ngjyrave ne listen `undo`. Siguron saktesisht se ku eshte leshuar box-i i terhequr.
 - **Heqja nga undo:**
-  - Nese ngjyra eshte hedhur nga lista `undo`, hiqet nga `undoStack` dhe ne varesi te llojit te `listType` dhe `targetId` ngjyra mund te shtohet:
-    - Per undo: Nese ngjyra hidhet ne `undoStack`, shtohet ne vendin e `targetId`.
+  - Nese ngjyra eshte hedhur nga lista `undo`, hiqet nga `undoStack` dhe ne varesi te llojit te listes (`undo` dhe `redo`) dhe destinacionit te hedhjes , ngjyra mund te shtohet:
+    - Per undo: Nese ngjyra hidhet ne `undoStack`, shtohet ne vendin perkates.
     - Per redo: Nese ngjyra hidhet ne listen `redo`, shtohet ne `redoStack`.
 
 - **Heqja nga redo:**
   - Nese ngjyra eshte hedhur nga lista `redo`, hiqet nga `redoStack`:
-    - Per redo: Nese ngjyra hidhet ne `redoStack`, shtohet ne vendin e `targetId`.
+    - Per redo: Nese ngjyra hidhet ne `redoStack`, shtohet ne vendin perkates.
     - Per undo: Nese ngjyra hidhet ne listen `undo`, shtohet ne `undoStack`.
 
 - Therritet `updateLists` dhe `updateSquare` per te perditesuar listat dhe box-in `colorSquare`.

@@ -4,6 +4,7 @@ class ColorContainer {
         this.currentColor = null;
         this.color = null;
         this.clickCountColor = null;
+		this.draggedData = null;
         this.undoStack = [];
         this.redoStack = [];
         this.clickCount = {
@@ -76,55 +77,91 @@ class ColorContainer {
 	}
 
     initDragAndDrop() {
-        const undoSquares = this.undoListDiv.children;
-        const redoSquares = this.redoListDiv.children;
-
-        // Drag and drop listeners to undo squares
-        for (let square of undoSquares) {
-            square.ondragover = (event) => event.preventDefault();
-            square.ondrop = (event) => this.handleDrop(event, 'undo', square.id);
-        }
-
-		// Drag and drop listeners to redo squares
-        for (let square of redoSquares) {
-            square.ondragover = (event) => event.preventDefault();
-            square.ondrop = (event) => this.handleDrop(event, 'redo', square.id);
-        }
-
-        // Allow dropping on both lists
-        this.redoListDiv.ondragover = (event) => event.preventDefault();
-        this.redoListDiv.ondrop = (event) => this.handleDrop(event, 'redo', null);
-
-        this.undoListDiv.ondragover = (event) => event.preventDefault();
-        this.undoListDiv.ondrop = (event) => this.handleDrop(event, 'undo', null);
+        this.setupDragAndDrop(this.undoListDiv, 'undo');
+        this.setupDragAndDrop(this.redoListDiv, 'redo');
     }
 
-    handleDrop(event, listType, targetId) {
-        event.preventDefault();
-        const data = event.dataTransfer.getData('text/plain');
-        const [draggedIndex, sourceList] = data.split('-');
+    setupDragAndDrop(container, listType) {
+        const squares = container.children;
+
+        for (let square of squares) {
+            square.draggable = true; // Make each square draggable
+            square.ondragstart = (event) => {
+                const index = Array.from(container.children).indexOf(square);
+                this.draggedData = `${index}-${listType}`; // Store dragged data
+                event.dataTransfer.setData('text/plain', this.draggedData); // Use dataTransfer
+            };
+
+            // Touch events for mobile
+            square.addEventListener('touchstart', (event) => {
+                const index = Array.from(container.children).indexOf(square);
+                this.draggedData = `${index}-${listType}`;
+                event.stopPropagation(); // Prevent any unintended interactions
+                square.classList.add('dragging'); // Optional class to indicate dragging
+            });
+
+            square.addEventListener('touchmove', (event) => {
+                const touch = event.touches[0];
+                square.style.position = 'absolute';
+                square.style.left = `${touch.clientX}px`;
+                square.style.top = `${touch.clientY}px`;
+                event.preventDefault();
+            });
+
+            square.addEventListener('touchend', (event) => {
+				const target = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+				this.handleDrop(event, target); // Pass the target found
+				// Reset position and remove dragging class
+				const draggedElement = document.querySelector('.dragging');
+				if (draggedElement) {
+					draggedElement.style.position = '';
+					draggedElement.classList.remove('dragging');
+				}
+				this.draggedData = null; // Reset dragged data
+			});
+
+        }
+
+        container.ondragover = (event) => event.preventDefault();
+        container.ondrop = (event) => this.handleDrop(event, container, listType);
+    }
+
+    handleDrop(event, target = null) {
+		event.preventDefault();
+
+		if (!this.draggedData) return;
+
+		const [draggedIndex, sourceList] = this.draggedData.split('-');
+
+		// Determine the actual target if not provided
+		if (!target) {
+			const dropPoint = event.changedTouches ? event.changedTouches[0] : event;
+			target = document.elementFromPoint(dropPoint.clientX, dropPoint.clientY);
+		}
 
 		if (sourceList === 'undo') {
-            const color = this.undoStack.splice(draggedIndex, 1)[0];
+			const color = this.undoStack.splice(draggedIndex, 1)[0];
 
-            if (listType === 'undo' && targetId) {
-                this.undoStack.splice(targetId.split('-')[1], 0, color);
-            } else if (listType === 'redo') {
-                this.redoStack.push(color);
-            }
-        } else if (sourceList === 'redo') {
-            const color = this.redoStack.splice(draggedIndex, 1)[0];
+			if (target && target.id.includes('undo')) {
+				const targetIndex = target.id.split('-')[1];
+				this.undoStack.splice(targetIndex, 0, color);
+			} else if (target && target.id.includes('redo')) {
+				this.redoStack.push(color);
+			}
+		} else if (sourceList === 'redo') {
+			const color = this.redoStack.splice(draggedIndex, 1)[0];
 
-            if (listType === 'redo' && targetId) {
-                this.redoStack.splice(targetId.split('-')[1], 0, color);
-            } else if (listType === 'undo') {
-                this.undoStack.push(color);
-            }
-        }
+			if (target && target.id.includes('redo')) {
+				const targetIndex = target.id.split('-')[1];
+				this.redoStack.splice(targetIndex, 0, color);
+			} else if (target && target.id.includes('undo')) {
+				this.undoStack.push(color);
+			}
+		}
 
-        this.updateLists(); // Refresh the lists to reflect changes
+		this.updateLists();
 		this.updateSquare();
-    }
+	}
 
     generateNewColor() {
         let r, g, b, clickCountR, clickCountG, clickCountB;
