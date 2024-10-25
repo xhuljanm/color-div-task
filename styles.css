@@ -10,6 +10,27 @@ button {
     margin: 10px;
 }
 
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+	border: 2px solid black;
+	width: 15px;
+	height: 15px;
+	margin-left: 2px;
+}
+
+.placeholder {
+    border: 2px dashed blue;
+    background-color: rgba(173, 216, 230, 0.5);
+    height: 15px;
+    margin: 2px;
+    display: none;
+}
+
 .title {
 	text-align: center;
 }

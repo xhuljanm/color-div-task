@@ -1,7 +1,7 @@
 class ColorContainer {
     constructor() {
         this.document = document;
-        this.currentColor = null;
+        this.currentColor = '#FFFFFF';
         this.color = null;
         this.clickCountColor = null;
 		this.draggedData = null;
@@ -54,15 +54,30 @@ class ColorContainer {
     }
 
     updateLists() {
-        this.undoListDiv.innerHTML = this.undoStack.map((color, index) =>
-            `<div id="undo-${index}" draggable="true" style="width: 15px; height: 15px; margin-left: 2px; background-color: ${color};" ondragstart="event.dataTransfer.setData('text/plain', '${index}-undo')"></div>`
-        ).join('');
+		this.undoListDiv.innerHTML = '';
+		this.redoListDiv.innerHTML = '';
 
-        this.redoListDiv.innerHTML = this.redoStack.map((color, index) =>
-            `<div id="redo-${index}" draggable="true" style="width: 15px; height: 15px; margin: 2px; background-color: ${color};" ondragstart="event.dataTransfer.setData('text/plain', '${index}-redo')"></div>`
-        ).join('');
+        this.undoStack.forEach((color, index) => {
+			const li = document.createElement('li');
+			li.id = `undo-${index}`;
+			li.draggable = true;
+			li.style.backgroundColor = color;
+			li.ondragstart = (event) => event.dataTransfer.setData('text/plain', `${index}-undo`);
 
-        this.initDragAndDrop(); // Re-initialize after updating lists
+			this.undoListDiv.appendChild(li);
+		});
+
+		this.redoStack.forEach((color, index) => {
+			const li = document.createElement('li');
+			li.id = `redo-${index}`;
+			li.draggable = true;
+			li.style.backgroundColor = color;
+			li.ondragstart = (event) => event.dataTransfer.setData('text/plain', `${index}-redo`);
+
+			this.redoListDiv.appendChild(li);
+		});
+
+		this.initDragAndDrop(); // Re-initialize after updating lists
     }
 
 	toggleList(type) {
@@ -164,7 +179,7 @@ class ColorContainer {
 	}
 
     generateNewColor() {
-        let r, g, b;
+		let r, g, b;
 
         while (true) { // Generate random RGB values
             r = Math.floor(Math.random() * 256);
@@ -200,41 +215,51 @@ class ColorContainer {
     }
 
     applyNewColor() {
-        this.generateNewColor(); // Generate new color first
-        if (this.color) {
-            this.currentColor = this.color;
-            this.undoStack.push(this.currentColor);
-            this.clickCount.value++;
+		this.generateNewColor(); // Generate the new color first
+
+		if (this.redoStack.length > 0) this.redoStack = [];
+		this.undoStack.push(this.currentColor);
+
+		if (this.color) {
+			this.currentColor = this.color;
+			this.clickCount.value++;
 			this.updateClickCountColor();
-            this.updateSquare();
-            this.updateLists();
-        }
-    }
+			this.updateSquare();
+			this.updateLists();
+		}
+	}
 
     applyUndoStack() {
-        if (this.undoStack.length > 0) {
-            this.redoStack.push(this.currentColor);
-            this.currentColor = this.undoStack.pop();
-			this.updateClickCountColor();
-            this.updateSquare();
-            this.updateLists();
-        }
-    }
+		if (this.undoStack.length > 0) {
+			this.color = this.undoStack.pop();
+			this.currentColor = this.color;
+			this.redoStack.push(this.currentColor);
 
-    applyRedoStack() {
-        if (this.redoStack.length > 0) {
-            this.undoStack.push(this.currentColor);
-            this.currentColor = this.redoStack.pop();
+			this.clickCount.value++;
 			this.updateClickCountColor();
-            this.updateSquare();
-            this.updateLists();
-        }
-    }
+			this.updateSquare();
+			this.updateLists();
+		}
+	}
+
+	applyRedoStack() {
+		if (this.redoStack.length > 0) {
+			this.color = this.redoStack.pop();
+			this.currentColor = this.color;
+			this.undoStack.push(this.currentColor);
+
+			this.clickCount.value++;
+			this.updateClickCountColor();
+			this.updateSquare();
+			this.updateLists();
+		}
+	}
+
 
     reset() {
         this.undoStack = [];
         this.redoStack = [];
-        this.currentColor = null;
+        this.currentColor = '#FFFFFF';
         this.color = null;
         this.clickCount = {
 			value: 0,

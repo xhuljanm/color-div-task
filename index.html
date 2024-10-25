@@ -24,8 +24,14 @@
         </div>
         <div id="colorSquare">0</div>
         <div id="overlay" class="overlay">
-            <div id="undoList" class="list">UndoList</div>
-            <div id="redoList" class="list">RedoList</div>
+            <ul id="undoList" class="list">
+				UndoList
+				<li class="placeholder" style="display: none;"></li>
+			</ul>
+            <ul id="redoList" class="list">
+				RedoList
+				<li class="placeholder" style="display: none;"></li>
+			</ul>
         </div>
     </div>
     <script src="./script.js"></script>
