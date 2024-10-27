@@ -20,8 +20,10 @@ class ColorContainer {
 			},
 			hex: ''
 		};
+
         this.undoListDiv = this.document.getElementById('undoList');
         this.redoListDiv = this.document.getElementById('redoList');
+
         this.placeholder = document.createElement('li');
         this.placeholder.classList.add('placeholder');
         this.placeholder.style.opacity = '0.5';
@@ -161,6 +163,7 @@ class ColorContainer {
             // Touch events for mobile
             square.addEventListener('touchstart', (event) => {
                 const index = Array.from(container.children).indexOf(square);
+
                 this.draggedData = `${index}-${listType}`;
                 this.draggedElement = square;
                 this.dragSourceList = listType;
@@ -169,6 +172,7 @@ class ColorContainer {
                     parent: container,
                     nextSibling: square.nextSibling
                 };
+
                 event.stopPropagation();
                 square.classList.add('dragging');
                 square.style.opacity = '0.4';
@@ -176,6 +180,7 @@ class ColorContainer {
 
             square.addEventListener('touchmove', (event) => {
                 const touch = event.touches[0];
+
                 if (this.draggedElement) {
                     this.draggedElement.style.position = 'absolute';
                     this.draggedElement.style.left = `${touch.clientX}px`;
@@ -184,8 +189,7 @@ class ColorContainer {
 
                 event.preventDefault();
 
-                // Find element under touch point
-                const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY); // Find element under touch point
 
                 if (elemBelow && elemBelow.tagName === 'LI') {
                     const rect = elemBelow.getBoundingClientRect();
@@ -226,6 +230,7 @@ class ColorContainer {
                     this.draggedElement.style.opacity = '1';
                     this.draggedElement.classList.remove('dragging');
                 }
+
                 this.draggedElement = null;
                 this.dragStartPosition = null;
                 this.draggedData = null;
@@ -312,6 +317,7 @@ class ColorContainer {
         }
 
         const targetList = target.id.includes('undo') ? 'undo' : target.id.includes('redo') ? 'redo' : null;
+
         if (!targetList) {
             if (this.dragStartPosition) {
                 this.dragStartPosition.parent.insertBefore( // Return to original position if invalid target
@@ -329,12 +335,8 @@ class ColorContainer {
 
         // Add to target only if not already in source stack
         const insertIndex = dropIndex === -1 ? targetStack.length : dropIndex;
-        if (targetList !== this.dragSourceList) {
-            targetStack.splice(insertIndex, 0, color);
-        } else {
-            // If same list, just reorder
-            targetStack.splice(insertIndex, 0, color);
-        }
+        if (targetList !== this.dragSourceList) targetStack.splice(insertIndex, 0, color);
+        else targetStack.splice(insertIndex, 0, color); // If same list, just reorder
 
         // Update current color based on the last color in undoStack
         if (this.undoStack.length > 0) this.currentColor = this.undoStack[this.undoStack.length - 1];
@@ -399,7 +401,6 @@ class ColorContainer {
 			this.redoStack.push(this.currentColor);
 			this.currentColor = lastColor;
 
-			this.clickCount.value++;
 			this.updateClickCountColor();
 			this.updateSquare();
 			this.updateLists();
@@ -412,7 +413,6 @@ class ColorContainer {
 			this.undoStack.push(this.currentColor);
 			this.currentColor = nextColor;
 
-			this.clickCount.value++;
 			this.updateClickCountColor();
 			this.updateSquare();
 			this.updateLists();
