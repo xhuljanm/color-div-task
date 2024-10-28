@@ -21,8 +21,11 @@ class ColorContainer {
 			hex: ''
 		};
 
+		this.overlay = this.document.getElementById('overlay');
         this.undoListDiv = this.document.getElementById('undoList');
         this.redoListDiv = this.document.getElementById('redoList');
+		this.undoListContainer = this.document.getElementById('undoListContainer');
+		this.redoListContainer = this.document.getElementById('redoListContainer');
 
         this.placeholder = document.createElement('li');
         this.placeholder.classList.add('placeholder');
@@ -37,8 +40,15 @@ class ColorContainer {
         this.document.getElementById('colorButton').onclick = () => this.applyNewColor();
         this.document.getElementById('undoButton').onclick = () => this.applyUndoStack();
         this.document.getElementById('redoButton').onclick = () => this.applyRedoStack();
-        this.document.getElementById('toggleUndo').onclick = () => this.toggleList('undo');
-        this.document.getElementById('toggleRedo').onclick = () => this.toggleList('redo');
+		this.document.getElementById('toggleUndoRedo').onclick = () => {
+			this.overlay.style.display = 'flex';
+
+			const isShowingUndo = this.undoListContainer.style.display === 'flex';
+			const newList = isShowingUndo ? 'redo' : 'undo';
+			this.toggleList(newList);
+
+			this.document.getElementById('toggleUndoRedo').innerText = `Show ${isShowingUndo ? 'Undo' : 'Redo'}`;
+		};
 
         // Initialize drag and drop
         this.initDragAndDrop();
@@ -95,14 +105,8 @@ class ColorContainer {
     }
 
 	toggleList(type) {
-		switch(type) {
-			case 'undo':
-				this.undoListDiv.style.display = this.undoListDiv.style.display === 'flex' ? 'none' : 'flex';
-				break;
-			case 'redo':
-				this.redoListDiv.style.display = this.redoListDiv.style.display === 'flex' ? 'none' : 'flex';
-				break;
-		}
+		this.undoListContainer.style.display = type === 'undo' ? 'flex' : 'none';
+		this.redoListContainer.style.display = type === 'redo' ? 'flex' : 'none';
 	}
 
     initDragAndDrop() {
@@ -130,11 +134,17 @@ class ColorContainer {
             };
 
             square.ondragend = () => {
+				if (this.draggedElement) {
+                    this.draggedElement.style.position = '';
+                    this.draggedElement.style.opacity = '1';
+                    this.draggedElement.classList.remove('dragging');
+                }
+
                 this.draggedElement = null;
-                this.dragStartPosition = null;
-                this.dragSourceList = null;
-                this.dragSourceIndex = null;
-                this.placeholder.remove();
+				this.dragStartPosition = null;
+				this.dragSourceList = null;
+				this.dragSourceIndex = null;
+				this.placeholder.remove();
             };
 
             square.ondragover = (event) => {
@@ -151,7 +161,7 @@ class ColorContainer {
                 placeholder.style.backgroundColor = this.draggedElement.style.backgroundColor;
 
                 // Check if mouse is between elements
-                if (mouseX < rect.left + rect.width / 2) {
+                if (mouseX < rect.left + rect.width / 2 + Math.floor(mouseX * 0.01)) { // added 1% of the mouseX for mouse precision hovering
                     square.parentNode.insertBefore(placeholder, square);
                     if (this.draggedElement) square.parentNode.insertBefore(this.draggedElement, square);
                 } else {
@@ -213,17 +223,37 @@ class ColorContainer {
             });
 
             square.addEventListener('touchend', (event) => {
-                const target = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
-                if (!target || (!target.id.includes('undo') && !target.id.includes('redo'))) {
-                    if (this.dragStartPosition) {
-                        this.dragStartPosition.parent.insertBefore( // Return to original position if dropped outside valid target
-                            this.draggedElement,
-                            this.dragStartPosition.nextSibling
-                        );
-                    }
-                } else {
-                    this.handleDrop(event, target);
-                }
+				const target = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+
+                if (window.innerWidth <= 768) {
+					const isRedoList = target && target.id === 'redoList';
+
+					if (isRedoList || (!target || (!target.id.includes('undo') && !target.id.includes('redo')))) {
+						const color = this.dragSourceList === 'undo'
+						? this.undoStack.splice(this.dragSourceIndex, 1)[0] // Remove from undo
+						: this.redoStack.splice(this.dragSourceIndex, 1)[0]; // Remove from redo
+
+						if (this.dragSourceList === 'undo') this.redoStack.push(color); // Add to redo
+						else this.undoStack.push(color); // Add to undo
+
+						this.currentColor = this.undoStack.length > 0 ? this.undoStack[this.undoStack.length - 1] : '#FFFFFF';
+						this.updateLists();
+						this.updateSquare();
+					} else {
+						this.handleDrop(event, target);
+					}
+				} else {
+					if (!target || (!target.id.includes('undo') && !target.id.includes('redo'))) {
+						if (this.dragStartPosition) {
+							this.dragStartPosition.parent.insertBefore( // Return to original position if dropped outside valid target
+								this.draggedElement,
+								this.dragStartPosition.nextSibling
+							);
+						}
+					} else {
+						this.handleDrop(event, target);
+					}
+				}
 
                 if (this.draggedElement) {
                     this.draggedElement.style.position = '';
@@ -284,8 +314,7 @@ class ColorContainer {
             if (targetList !== this.dragSourceList) targetStack.splice(insertIndex, 0, color);
             else targetStack.splice(insertIndex, 0, color); // If same list, just reorder
 
-            // Update current color based on the last color in undoStack
-            if (this.undoStack.length > 0) this.currentColor = this.undoStack[this.undoStack.length - 1];
+            if (this.undoStack.length > 0) this.currentColor = this.undoStack[this.undoStack.length - 1]; // Update current color based on the last color in undoStack
 
             if (placeholder) placeholder.remove();
             this.updateLists();

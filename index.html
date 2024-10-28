@@ -18,20 +18,24 @@
             <button id="redoButton" class="button blue" onclick="ColorContainerClient.redo()">Redo</button>
             <button id="reset" class="button gray" onclick="ColorContainerClient.reset()">Reset</button>
             <div class="toggleButtons">
-				<button id="toggleUndo" class="button gray">Toggle Undo List</button>
-            	<button id="toggleRedo" class="button gray">Toggle Redo List</button>
+				<button id="toggleUndoRedo" class="button gray">Show Lists</button>
 			</div>
         </div>
         <div id="colorSquare">0</div>
+		<p class="mobile_info">Drag the element outside the list to add it to the other list.</p>
         <div id="overlay" class="overlay">
-            <ul id="undoList" class="list">
-				UndoList
-				<li class="placeholder" style="display: none;"></li>
-			</ul>
-            <ul id="redoList" class="list">
-				RedoList
-				<li class="placeholder" style="display: none;"></li>
-			</ul>
+			<div id="undoListContainer">
+				<pre>UndoList</pre>
+				<ul id="undoList" class="list">
+					<li class="placeholder" style="display: none;"></li>
+				</ul>
+			</div>
+			<div id="redoListContainer">
+				<pre>RedoList</pre>
+				<ul id="redoList" class="list">
+					<li class="placeholder" style="display: none;"></li>
+				</ul>
+			</div>
         </div>
     </div>
     <script src="./script.js"></script>

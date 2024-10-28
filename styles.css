@@ -146,8 +146,20 @@ li {
 	box-shadow: 0 4px 15px black;
 }
 
+#undoListContainer, #redoListContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#undoListContainer pre, #redoListContainer pre {
+    margin: 0;
+    padding-bottom: 5px;
+    font-weight: bold;
+}
+
 #undoList, #redoList {
-    width: 500px;
+    width: 300px;
     height: 100px;
     padding: 10px;
     border: 1px solid #000;
@@ -157,47 +169,51 @@ li {
     flex-wrap: wrap;
     align-content: flex-start;
     overflow-y: auto;
+	transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 #undoList li, #redoList li {
     border: 2px solid black;
-    width: 15px;
-    height: 15px;
+    width: 25px;
+    height: 25px;
     margin: 2px;
 }
-
 
 #undoList:hover, #redoList:hover {
 	box-shadow: 0 4px 15px black;
 }
 
-@media (max-width: 600px) {
+.mobile_info {
+	display: none;
+}
+
+@media (max-width: 768px) {
+	.mobile_info {
+		display: block;
+	}
+
     #colorSquare {
         width: 150px;
         height: 150px;
         font-size: 20px;
     }
 
-    #undoList, #redoList {
-        width: 90%;
-        min-width: 150px;
-        max-height: 150px;
-        padding: 10px;
-        border: 1px solid #000;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        margin: 5px;
-        overflow-y: auto;
-    }
+	.overlay {
+		display: none;
+	}
 
-    #undoList div, #redoList div {
-        width: 20px;
-        height: 20px;
-        margin: 2px;
-    }
+    #undoList, #redoList {
+		max-width: 175px;
+		height: 150px;
+		padding: 10px;
+		border: 1px solid #000;
+		border-radius: 5px;
+		background-color: #f9f9f9;
+		display: flex;
+		flex-direction: row;
+		margin: 5px;
+		overflow-y: auto;
+	}
 
     .toggleButtons {
         display: flex;
