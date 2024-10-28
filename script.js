@@ -40,15 +40,8 @@ class ColorContainer {
         this.document.getElementById('colorButton').onclick = () => this.applyNewColor();
         this.document.getElementById('undoButton').onclick = () => this.applyUndoStack();
         this.document.getElementById('redoButton').onclick = () => this.applyRedoStack();
-		this.document.getElementById('toggleUndoRedo').onclick = () => {
-			this.overlay.style.display = 'flex';
-
-			const isShowingUndo = this.undoListContainer.style.display === 'flex';
-			const newList = isShowingUndo ? 'redo' : 'undo';
-			this.toggleList(newList);
-
-			this.document.getElementById('toggleUndoRedo').innerText = `Show ${isShowingUndo ? 'Undo' : 'Redo'}`;
-		};
+		this.document.getElementById('showUndoButton').onclick = () => this.toggleList('undo');
+        this.document.getElementById('showRedoButton').onclick = () => this.toggleList('redo');
 
         // Initialize drag and drop
         this.initDragAndDrop();
@@ -105,8 +98,35 @@ class ColorContainer {
     }
 
 	toggleList(type) {
-		this.undoListContainer.style.display = type === 'undo' ? 'flex' : 'none';
-		this.redoListContainer.style.display = type === 'redo' ? 'flex' : 'none';
+		const isUndoVisible = this.undoListContainer.style.display === 'flex';
+		const isRedoVisible = this.redoListContainer.style.display === 'flex';
+
+		if (type === 'undo') {
+			if (isUndoVisible) { // Toggle Undo List
+				this.undoListContainer.style.display = 'none';
+				this.document.getElementById('showUndoButton').innerText = 'Show Undo List';
+			} else {
+				this.overlay.style.display = 'flex';
+				this.undoListContainer.style.display = 'flex';
+				this.redoListContainer.style.display = 'none'; // Hide Redo List
+				this.document.getElementById('showUndoButton').innerText = 'Hide Undo List';
+				this.document.getElementById('showRedoButton').innerText = 'Show Redo List'; // Reset redo button text
+			}
+		} else if (type === 'redo') { // Toggle Redo List
+			if (isRedoVisible) {
+				this.redoListContainer.style.display = 'none';
+				this.document.getElementById('showRedoButton').innerText = 'Show Redo List';
+			} else {
+				this.overlay.style.display = 'flex';
+				this.redoListContainer.style.display = 'flex';
+				this.undoListContainer.style.display = 'none'; // Hide Undo List
+				this.document.getElementById('showRedoButton').innerText = 'Hide Redo List';
+				this.document.getElementById('showUndoButton').innerText = 'Show Undo List'; // Reset undo button text
+			}
+		}
+
+		// if both hidden, hide overlay
+		if (this.undoListContainer.style.display === 'none' && this.redoListContainer.style.display === 'none') this.overlay.style.display = 'none';
 	}
 
     initDragAndDrop() {
@@ -212,7 +232,7 @@ class ColorContainer {
                     const placeholder = this.placeholder.cloneNode(true);
                     placeholder.style.backgroundColor = this.draggedElement.style.backgroundColor;
 
-                    if (touch.clientX < rect.left + rect.width / 2) {
+					if (touch.clientX < rect.left + rect.width / 2) {
                         elemBelow.parentNode.insertBefore(placeholder, elemBelow);
                         if (this.draggedElement) elemBelow.parentNode.insertBefore(this.draggedElement, elemBelow);
                     } else {
